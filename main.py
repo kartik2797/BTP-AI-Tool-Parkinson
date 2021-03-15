@@ -18,7 +18,6 @@ def upload_file():
         f = request.files['file']
         if f.filename != '':
             f.save(f.filename)
-        return "No file Uploaded"
         f.save((f.filename))
         req = request.form
         patient_name = req['patientName']
@@ -30,7 +29,7 @@ def upload_file():
         cursor.execute( "INSERT INTO patient(patient_name,patient_age,patient_gen,patient_email,patient_file) VALUES(%s,%s,%s,%s,%s)",(patient_name,patient_age,patient_gen,patient_email,patient_file))
         mysql.connection.commit()
         cursor.close()
-        return patient_name+patient_age+patient_gen+patient_email+patient_file
+        return render_template('result.html')
 
 
 
