@@ -1,6 +1,8 @@
 from flask import Flask
 from flask import render_template,request,redirect
-from flask_mysqldb import MySQL
+# from flask_mysqldb import MySQL
+import numpy as np
+
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
@@ -31,6 +33,22 @@ def upload_file():
         cursor.close()
         return render_template('result.html')
 
+@app.route('/preprocess')
+def preprocess():
+    """ Preprocessing the CSV File present """
+    load_data = np.loadtxt('sample.txt') # This would change according to the File Uploaded
+    features = np.arange(1,19)
+    load_data = load_data[:,features]
+    person_weight = 70 # Person Weight from the Form
+    load_data = load_data // person_weight
+    
+    pred_list = predict(load_data)
+    fin_pred = custom_predict(pred_list)
+    
+    return str(load_data.shape)
+
+    # These two values would be stored in the DB and we would return a different page
+    # and the corresponding shit would be displayed accordingly
 
 
 if __name__ == '__main__':
