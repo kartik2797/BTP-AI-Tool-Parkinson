@@ -1,13 +1,16 @@
 from flask import Flask
 from flask import render_template,request,redirect
-# from flask_mysqldb import MySQL
+from flask_mysqldb import MySQL
 import numpy as np
+import pickle
+import trainer
+import os
 
 app = Flask(__name__)
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'kartik'
-app.config['MYSQL_DB'] = 'BTP'
+app.config['MYSQL_HOST'] = os.environ.get('DB_HOST')
+app.config['MYSQL_USER'] = os.environ.get('DB_USER')
+app.config['MYSQL_PASSWORD'] = os.environ.get('DB_PASSWORD')
+app.config['MYSQL_DB'] = os.environ.get('DB_NAME')
 mysql = MySQL(app)
 
 @app.route('/')
@@ -38,15 +41,17 @@ def upload_file():
 def preprocess():
     """ Preprocessing the CSV File present """
     load_data = np.loadtxt('sample.txt') # This would change according to the File Uploaded
-    features = np.arange(1,19)
-    load_data = load_data[:,features]
-    person_weight = 70 # Person Weight from the Form
-    load_data = load_data // person_weight
+    svm_pred = trainer.svm_predict(load_data)
     
-    pred_list = predict(load_data)
-    fin_pred = custom_predict(pred_list)
+    # features = np.arange(1,19)
+    # load_data = load_data[:,features]
+    # person_weight = 70 # Person Weight from the Form
+    # load_data = load_data // person_weight
     
-    return str(load_data.shape)
+    # pred_list = predict(load_data)
+    # fin_pred = custom_predict(pred_list)
+    
+    # return str(load_data.shape)
 
     # These two values would be stored in the DB and we would return a different page
     # and the corresponding shit would be displayed accordingly
