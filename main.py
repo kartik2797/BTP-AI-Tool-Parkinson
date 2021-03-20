@@ -40,5 +40,27 @@ def upload_file():
 
         return render_template('result.html')
 
+@app.route('/researcher_index',methods = ['GET','POST'])
+def researcher_index(name=None):
+    if request.method == 'POST':
+        if request.form["rs1"] == 'r1':
+            pass
+        if request.form["rs2"] == 'r2':
+            pass
+        if request.form["rs3"] == 'r3':
+            pass
+        if request.form["rs4"] == 'r4':
+            pass
+        if request.form["rs5"] == 'r5':
+            pass
+        if request.form["rs6"] == 'r6':
+            pass
+        if request.form["rs7"] == 'r7':
+            pass
+        if request.form["rs8"] == 'r8':
+            pass
+        
+    return render_template('data_selection.html',name=name)
+
 if __name__ == '__main__':
     app.run(debug = True)
