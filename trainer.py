@@ -6,6 +6,11 @@ def predict(name, weight, filename):
     
     # CNN Model
     cnn_pred = CNN(weight = weight,filename = filename)
-    print(cnn_pred.pred)
+    
+    pred_list = [cnn_pred,cnn_pred,cnn_pred,cnn_pred]
+
+    # Custom Model Training Also Left
+
+    return pred_list
 
     
