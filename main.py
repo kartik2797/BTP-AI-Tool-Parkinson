@@ -5,8 +5,10 @@ import numpy as np
 import pickle
 import trainer
 import os
+from generate import Custom
 
 app = Flask(__name__)
+app.config['DEBUG'] = True
 app.config['MYSQL_HOST'] = os.environ.get('DB_HOST')
 app.config['MYSQL_USER'] = os.environ.get('DB_USER')
 app.config['MYSQL_PASSWORD'] = os.environ.get('DB_PASSWORD')
@@ -40,27 +42,46 @@ def upload_file():
 
         return render_template('result.html')
 
-@app.route('/researcher_index',methods = ['GET','POST'])
-def researcher_index(name=None):
-    if request.method == 'POST':
-        if request.form["rs1"] == 'r1':
-            pass
-        if request.form["rs2"] == 'r2':
-            pass
-        if request.form["rs3"] == 'r3':
-            pass
-        if request.form["rs4"] == 'r4':
-            pass
-        if request.form["rs5"] == 'r5':
-            pass
-        if request.form["rs6"] == 'r6':
-            pass
-        if request.form["rs7"] == 'r7':
-            pass
-        if request.form["rs8"] == 'r8':
-            pass
+@app.route('/researcher/select')
+def custom_select(name=None):
+    """ Researcher selects the methods he wants """
+    return render_template('selection.html')
+
+@app.route('/researcher/selected',methods=['POST','GET'])
+def post_selection(name=None):
+    """ Processing the selected methods """
+    if request.method == "POST":
+        selections = request.form
         
-    return render_template('data_selection.html',name=name)
+        # Creating a Proper dictionary from the raw JSON
+        model = []
+        foot = []
+        preprocess = []
+        for key in selections:
+            if key == 'model':
+                model.append(selections[key])
+            
+            if key in ['ls1','ls2','ls3','ls4','ls5','ls6','ls7','ls8','rs1','rs2','rs3','rs4','rs5','rs6','rs7','rs8']:
+                foot.append(selections[key])
+            
+            if key in ['cop','kurt','skew','mean','std']:
+                preprocess.append(selections[key])
+        
+        fin_selections = {  
+                        'model': model,
+                        'foot': foot,
+                        'preprocess':preprocess
+                        }                
+        
+        # Generate python script
+        custom_script = Custom(fin_selections)
+        custom_script.generate()
+
+        # Add to Database as well
+
+        # Returning to a Template
+        return render_template('confirmation.html',fin_selections = fin_selections)
+       
 
 if __name__ == '__main__':
     app.run(debug = True)
