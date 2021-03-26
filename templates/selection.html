@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>BTP</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">AI Tool : Parkinson Disease</a>
+    </div>
+  </div>
+</nav>
+
+<form action="http://localhost:5000/researcher/selected" method="POST">
+  <div class="row">
+    <div class="col-xs-6">
+      <div class="container">
+        <h3 class="display-4"> Feature Selection</h3>
+        <table class="table table-hover" style="width:50%">
+            <tbody>
+              <tr>
+                <td><label for="cop">COP</label></td>
+                <td><input type="checkbox" id="cop" name="cop" value="cop"></td>
+              </tr>
+              <tr>
+                <td><label for="kurt">Mean Kurtosis</label></td>
+                <td><input type="checkbox" id="kurt" name="kurt" value="kurt"></td>
+              </tr>
+              <tr>
+                <td><label for="skew">Mean Skewess</label></td>
+                <td><input type="checkbox" id="skew" name="skew" value="skew"></td>
+              </tr>
+              <tr>
+                <td><label for="mean">Mean</label></td>
+                <td><input type="checkbox" id="mean" name="mean" value="mean"></td>
+              </tr>
+              <tr>
+                <td><label for="std">Standard Deviation</label></td>
+                <td><input type="checkbox" id="std" name="std" value="std"></td>
+              </tr>
+              </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="col-xs-6">
+      <div class="container">
+        <h3 class="display-4">Model Selection</h3>
+        <table class="table table-hover" style="width:50%">
+            <tbody>
+              <tr>
+                <td><label for="cnn">Convultional Neural Networks</label></td>
+                <td><input type="radio" id="cnn" name="model" value="cnn"></td>
+              </tr>
+              <tr>
+                <td><label for="lstm">LSTM</label></td>
+                <td><input type="radio" id="lstm" name="model" value="lstm"></td>
+              </tr>
+              <tr>
+                <td><label for="svm">Support Vector Machines</label></td>
+                <td><input type="radio" id="svm" name="model" value="svm"></td>
+              </tr>
+              <tr>
+                <td><label for="combined">CNN + LSTM</label></td>
+                <td><input type="radio" id="combined" name="model" value="combined"></td>
+              </tr>
+              <tr>
+                <td><label for="rfr">Random Forrest Regression</label></td>
+                <td><input type="radio" id="rfr" name="model" value="rfr"></td>
+              </tr>
+              </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-6">
+      <div class="container">
+          <h2>Right Foot</h2>
+          <p></p>            
+          <table class="table table-hover" style="width:50%">
+            <tbody>
+              <tr>
+                <td><label for="r1">R1 Sensor</label</td>
+                <td><input type="checkbox" id="r1" name="rs1" value="r1" checked></td>
+                <td rowspan="0"><img src="C:\Users\Asus\Desktop\BTP-Parkinson\BTP-AI-Tool-Parkinson\images\right_foot_sensor.png" class="rounded float-start"></td>
+              </tr>
+              <tr>
+                  <td><label for="r2">R2 Sensor</label</td>
+                  <td><input type="checkbox" id="r2" name="rs2" value="r2" checked></td>
+              </tr>
+              <tr>
+                  <td><label for="r3">R3 Sensor</label</td>
+                  <td><input type="checkbox" id="r3" name="rs3" value="r3" checked></td>
+              </tr>
+              <tr>
+                  <td><label for="r4">R4 Sensor</label</td>
+                  <td><input type="checkbox" id="r4" name="rs4" value="r4" checked></td>
+              </tr>
+              <tr>
+                  <td><label for="r5">R5 Sensor</label</td>
+                  <td><input type="checkbox" id="r5" name="rs5" value="r5" checked></td>
+              </tr>
+              <tr>
+                  <td><label for="r6">R6 Sensor</label</td>
+                  <td><input type="checkbox" id="r6" name="rs6" value="r6" checked></td>
+              </tr>
+              <tr>
+                  <td><label for="r7">R7 Sensor</label</td>
+                  <td><input type="checkbox" id="r7" name="rs7" value="r7" checked></td>
+              </tr>
+              <tr>
+                  <td><label for="r8">R8 Sensor</label</td>
+                  <td><input type="checkbox" id="r8" name="rs8" value="r8" checked></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div class="col-xs-6">
+        <div class="container">
+          <h2>Left Foot</h2>
+          <p></p>            
+          <table class="table table-hover" style="width:50%">
+            <tbody>
+              <tr>
+                <td><label for="l1">l1 Sensor</label</td>
+                <td><input type="checkbox" id="l1" name="ls1" value="l1" checked></td>
+                <td rowspan="0"><img src="C:\Users\Asus\Desktop\BTP-Parkinson\BTP-AI-Tool-Parkinson\images\left_foot_sensor.png" class="rounded float-start" height="50%"></td>
+              </tr>
+              <tr>
+                  <td><label for="l2">l2 Sensor</label</td>
+                  <td><input type="checkbox" id="l2" name="ls2" value="l2" checked></td>
+              </tr>
+              <tr>
+                  <td><label for="l3">l3 Sensor</label</td>
+                  <td><input type="checkbox" id="l3" name="ls3" value="l3" checked></td>
+              </tr>
+              <tr>
+                  <td><label for="l4">l4 Sensor</label</td>
+                  <td><input type="checkbox" id="l4" name="ls4" value="l4" checked></td>
+              </tr>
+              <tr>
+                  <td><label for="l5">l5 Sensor</label</td>
+                  <td><input type="checkbox" id="l5" name="ls5" value="l5" checked></td>
+              </tr>
+              <tr>
+                  <td><label for="l6">l6 Sensor</label</td>
+                  <td><input type="checkbox" id="l6" name="ls6" value="l6" checked></td>
+              </tr>
+              <tr>
+                  <td><label for="l7">l7 Sensor</label</td>
+                  <td><input type="checkbox" id="l7" name="ls7" value="l7" checked></td>
+              </tr>
+              <tr>
+                  <td><label for="l8">l8 Sensor</label</td>
+                  <td><input type="checkbox" id="l8" name="ls8" value="l8" checked></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+  </div>
+  <div class="row">
+    <p><input type="submit" value="submit"></p>
+  </div>
+</form>
+
+</body>
