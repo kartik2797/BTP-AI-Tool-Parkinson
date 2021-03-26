@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template,request,redirect
+from flask import render_template,request,redirect,send_file
 from flask_mysqldb import MySQL
 import numpy as np
 import pickle
@@ -78,10 +78,19 @@ def post_selection(name=None):
         custom_script.generate()
 
         # Add to Database as well
+        
 
         # Returning to a Template
         return render_template('confirmation.html',fin_selections = fin_selections)
        
+
+@app.route('/researcher/download',methods=['GET','POST'])
+def download_file():
+    """ Download Custom.py File """
+    try:
+        return send_file('custom.py',attachment_filename='custom.py')
+    except Exception as e:
+        return str(e)
 
 if __name__ == '__main__':
     app.run(debug = True)

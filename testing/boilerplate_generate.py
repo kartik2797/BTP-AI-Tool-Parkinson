@@ -2,7 +2,7 @@ import numpy as numpy
 import pandas as pd
 
 # Loading the Data
-# Assuming the data is 
+# Assuming the data is present as 
 
 lx = [-500,-700,-300,-700,-300,-700,-300,-500]
 rx = [500,700,300,700,300,700,300,500]
