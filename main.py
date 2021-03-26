@@ -62,5 +62,21 @@ def researcher_index(name=None):
         
     return render_template('data_selection.html',name=name)
 
+@app.route('/results')
+def res(name=None):
+    v1 = 90
+    v2 = 30
+    v3 = 60
+    v4 = 77
+    res = [1,2,3,4]
+    cursor = mysql.connection.cursor()
+    cursor.execute( "INSERT INTO patients(patient_name,patient_age,patient_gen,patient_email,patient_file,patient_weight) VALUES(%s,%s,%s,%s,%s,%s)",(patient_name,patient_age,patient_gen,patient_email,patient_file,patient_weight))
+    mysql.connection.commit()
+    cursor.close()
+    result = {"LSTM":v1,"CNN":v2,"SVM":v3,"LSTM + CNN":v4}
+    '''saving results to db'''
+    
+    return render_template('cardsui.html',result = result)
+
 if __name__ == '__main__':
     app.run(debug = True)
