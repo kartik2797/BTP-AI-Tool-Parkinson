@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>BTP</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+<body>
+
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">AI Tool : Parkinson Disease</a>
+        </div>
+      </div>display: 
+    </nav>
+
+    <div class="container">
+        <div class="jumbotron">
+            <h2 style="align-content: center;"> SELECTION OF THE MODEL </h2>
+            <h3 class="info-danger">Download the Python Script File and run it on your High Computing Machine</h3>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="jumbotron">
+            <table class="table">
+                <thead>
+                    <tr class="table-danger">
+                        <th scope="row" class="text-center">Model Selection</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="table-success">
+                        <th scope="row" class="text-center">{{ fin_selections['model'][0] }}</th>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table">
+                <thead>
+                    <tr class="table-danger">
+                        <th scope="row" class="text-center">Feet Selection</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for value in fin_selections['foot'] %}
+
+                        <tr class="table-success">
+                            <td scope="row" class="text-center">{{ value }}</td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+            <table class="table">
+                <thead>
+                    <tr class="table-danger">
+                        <th scope="row" class="text-center">Preprocessing Methods</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for value in fin_selections['preprocess'] %}
+
+                        <tr class="table-success">
+                            <td scope="row" class="text-center">{{ value }}</td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
