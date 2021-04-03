@@ -1,4 +1,4 @@
-from flask import Blueprint,render_template
+from flask import Blueprint,render_template,Flask,flash,url_for
 from flask import current_app as app
 from flask import render_template,request,redirect,send_file,make_response
 from flask_mysqldb import MySQL
@@ -9,14 +9,22 @@ from datetime import datetime as dt
 from .trainer import predict
 from application.models import db
 from application.models import Users
+from werkzeug.utils import secure_filename
+from app.application.users import trainer
 
-
+UPLOAD_FOLDER = 'app/application/users/uploads'
+ALLOWED_EXTENSIONS = {'csv'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Blueprint Config
 users_bp = Blueprint(
         'users_bp',__name__,
         template_folder='templates',
         static_folder='static'
     )
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @users_bp.route('/users',methods=['GET'])
 def index():
@@ -25,25 +33,32 @@ def index():
 @users_bp.route('/users/uploader',methods = ['GET','POST'])
 def upload_file():
     if request.method == 'POST':
-        f = request.files['file']
-        if f.filename != '':
-            f.save(f.filename)
-        f.save((f.filename))
-        req = request.form
-        patient_name = req['patientName']
-        patient_age = req['patientAge']
-        patient_gen = req['patientGender']
-        patient_email = req['patientEmail']
-        patient_weight = req['patientWeight']
-        patient_file = f.filename
-        cursor = mysql.connection.cursor()
-        cursor.execute( "INSERT INTO patients(patient_name,patient_age,patient_gen,patient_email,patient_file,patient_weight) VALUES(%s,%s,%s,%s,%s,%s)",(patient_name,patient_age,patient_gen,patient_email,patient_file,patient_weight))
-        mysql.connection.commit()
-        cursor.close()
+        if 'file' not in request.files:
+            flash('No user data file uploaded')
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            req = request.form
+            patient_name = req['patientName']
+            patient_age = req['patientAge']
+            patient_gen = req['patientGender']
+            patient_email = req['patientEmail']
+            patient_weight = req['patientWeight']
+            patient_file = f.filename
+            cursor = mysql.connection.cursor()
+            cursor.execute( "INSERT INTO patients(patient_name,patient_age,patient_gen,patient_email,patient_file,patient_weight) VALUES(%s,%s,%s,%s,%s,%s)",(patient_name,patient_age,patient_gen,patient_email,patient_file,patient_weight))
+            mysql.connection.commit()
+            cursor.close()
 
-        trainer.predict(patient_name, patient_weight, patient_file)
-
-        return render_template('result.html')
+            trainer.predict(patient_name, patient_weight, patient_file)
+            return redirect(url_for('uploaded_file',filename=filename))
+        
+    return "ERROR UPLOADING FILE"
 
 @users_bp.route('/users/results')
 def res(name=None):
