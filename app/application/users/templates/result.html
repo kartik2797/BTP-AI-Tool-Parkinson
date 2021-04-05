@@ -28,11 +28,11 @@
 <div class="row">
   {% for key, value in result.items() %}
 
-  <div class="col-sm-3">
-    <div class="card text-white bg-info mb-3" style="max-width: 18rem;">
-      <div class="card-header">{{ key }}</div>
+  <div class="col-sm-6">
+    <div class="card text-white bg-info mb-3" style="max-width: 25rem;">
+      <div class="card-header">LSTM</div>
       <div class="card-body">
-        <h5 class="card-title">Accuracy :: {{ value }}</h5>
+        <h5 class="card-title">(result.__getitem__('LSTM'))</h5>
         <p class="card-text">This model specialises on patient having GAIT Problems type 1</p>
       </div>
     </div>
