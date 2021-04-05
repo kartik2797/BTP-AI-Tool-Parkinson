@@ -155,47 +155,49 @@ class model_lstm:
         print("Shape of Test Set: " + str(self.X_test.shape))
 
 class Data_2D:
-    """ For 2D Classification of the Data """
-    def __init__(self):
-        
-        """ Initialize Variables """
-        self.pk_list = pk_list
-        self.ctrl_list = ctrl_list
+  """ For 2D Classification of the Data """
+  def __init__(self):
+      
+      """ Initialize Variables """
+      self.pk_list = pk_list
+      self.ctrl_list = ctrl_list
 
-        self.X_data = np.array([])
-        self.y_data = np.array([])
-        
-        self.columns = ["time","l1","l2","l3","l4","l5","l6","l7","l8","r1","r2","r3","r4","r5","r6","r7","r8","lTotal","rTotal"]
-        self.sep = "\t"
+      self.X_data = np.array([])
+      self.y_data = np.array([])
+      
+      self.columns = ["time","l1","l2","l3","l4","l5","l6","l7","l8","r1","r2","r3","r4","r5","r6","r7","r8","lTotal","rTotal"]
+      self.sep = "\t"
 
-        self.df = pd.DataFrame(["time","l1","l2","l3","l4","l5","l6","l7","l8","r1","r2","r3","r4","r5","r6","r7","r8","lTotal","rTotal","y"])
+      self.df = pd.DataFrame()
 
-        self.load()
+      self.load()
 
-    def load(self):
-        """ Loads the Entire Data """
+  def load(self):
+      """ Loads the Entire Data """
 
-        print("Loading Training Control")
-        self.load_data(self.ctrl_list, 0)
-        prit("Loading Training Parkinson")
-        self.load_data(self.pk_list, 1)
+      print("Loading Training Control")
+      self.load_data(self.ctrl_list, 0)
+      print("Loading Training Parkinson")
+      self.load_data(self.pk_list, 1)
 
-        print("Shape of Entire DataFrame: " + str(self.df.shape))
+      print("Shape of Entire DataFrame: " + str(self.df.shape))
+      print(self.df.head())
 
-    def load_data(self,liste,y):
-        """ Loads the Respective Data """
-        for i in range(0,len(liste)):
-            
-            df_unit = pd.read_csv(liste[i],sep = self.sep,names = self.columns)
-            id_person = ((liste[i]).split('_'))[0]
-            df_unit = df_unit.drop(['time'],axis = 1)
-            df_unit = df_unit.div(df_wts.loc[id_person, 'weight'])
+  def load_data(self,liste,y):
+      """ Loads the Respective Data """
+      for i in range(0,len(liste)):
+          
+          df_unit = pd.read_csv(liste[i],sep = self.sep,names = self.columns)
+          id_person = ((liste[i]).split('_'))[0]
+          df_unit = df_unit.drop(['time'],axis = 1)
+          df_unit = df_unit.div(df_wts.loc[id_person, 'weight'])
 
-            print(df_unit.shape)
+          df_unit['y'] = y
 
-            df_unit['y'] = y
+          if i == 0:
+            print(df_unit.head())
 
-            self.df.append(df_unit)
+          self.df = self.df.append(df_unit)
 
 from sklearn.model_selection import train_test_split
 from sklearn import svm
@@ -203,87 +205,92 @@ import pickle
 from sklearn import metrics
 class model_svm:
 
-    """ SVM Classifier """
-    def __init__(self,df):
-        """ Initialization """
+  """ SVM Classifier """
+  def __init__(self,df):
+      """ Initialization """
 
-        self.df = df
+      self.df = df
+      self.train()
 
-        self.train()
+  def train(self):
+      """ Training the Model """
+      y = self.df['y']
+      X = self.df.loc[:,self.df.columns != 'y']
 
-    def train(self):
-        """ Training the Model """
-        y = self.df['y']
-        X = self.df[:,-1:]
+      X = X.replace([np.inf,-np.inf],np.nan)
+      X = X.fillna(X.mean())
 
-        X = X.replace([np.inf,-np.inf],np.nan)
-        X = X.fillna(X.mean())
+      X_train, X_test,y_train, y_test = train_test_split(X,y,test_size = 0.3,random_state = 42)
+      
+      clf = svm.SVC()
+      print(X_train.shape)
+      print(y_train.head())
+      clf.fit(X_train,y_train)
+      model_file = 'svm.sav'
+      pickle.dump(model, open(model_file, 'wb'))
+      y_pred = clf.predict(X_test)
 
-        X_train, X_test,y_train, y_test = train_test_split(X,y,test_size = 0.3,random_state = 42)
-        clf = svm.SVC()
-        clf.fit(X_train,y_train)
-        model_file = 'svm.sav'
-        pickle.dump(model, open(model_file, 'wb'))
-        y_pred = clf.predict(X_test)
+      print("Shape of Y_pred: " + str(y_pred.shape))
 
-        print("Shape of Y_pred: " + str(y_pred.shape))
+      accuracy = self.accuracy(y_test,y_pred)
 
-        accuracy = self.accuracy(y_test,y_pred)
+      print("Accuracy of the Model = " + str(accuracy))
 
-        print("Accuracy of the Model = " + str(accuracy))
+  def accuracy(self,y_test,y_pred):
+      """ Returning the Accuracy of the Model """
+      return metrics.accuracy_score(y_test,y_pred)
 
-    def accuracy(self,y_test,y_pred):
-        """ Returning the Accuracy of the Model """
-        return metrics.accuracy_score(y_test,y_pred)
-
+from keras.layers import Conv2D,Activation,MaxPooling1D
 class model_cnn:
-    """ CNN Model """
+  """ CNN Model """
 
-    def __init__(self,X_data,y_data):
-        """ Initialization """
-        self.X_data = X_data
-        self.y_data = y_data
-        self.X_train = np.array([])
-        self.y_train = np.array([])
-        self.X_test = np.array([])
-        self.y_test = np.array([])
+  def __init__(self,X_data,y_data):
+      """ Initialization """
+      self.X_data = X_data
+      self.y_data = y_data
+      self.X_train = np.array([])
+      self.y_train = np.array([])
+      self.X_test = np.array([])
+      self.y_test = np.array([])
 
-        self.model_train()
-    
-    def model_train(self):
-        """ Training the Model """
-        self.train_test_split()
+      self.model_train()
+  
+  def model_train(self):
+      """ Training the Model """
+      self.train_test_split(split = 0.8)
 
-        model = Sequential()
-        model.add(Conv2D(32,(5,5),padding = "same",activation="relu"))
-        model.add(MaxPooling2D(pool_size = (2,2)))
-        model.add(Conv2D(32,(5,5),padding = "same",activation="relu"))
-        model.add(MaxPooling2D(pool_size = (2,2)))
-        model.Dropout((0.25))
-        model.add(Dense(2))
-        model.add(Activation("softmax"))
+      model = Sequential()
+      model.add(Conv1D(32,5,padding = "same",activation="relu",input_shape = (100,18)))
+      model.add(MaxPooling1D(2))
+      model.add(Conv1D(64,5,padding = "same",activation="relu"))
+      model.add(MaxPooling1D(2))
+      model.add(Dropout((0.25)))
+      model.add(Dense(1024))
+      model.add(Activation("softmax"))
 
-        print(model.summary())
+      model.add(Dense(1))
 
-        print("Compiling...")
+      print(model.summary())
 
-        model.compile(loss='binary_crossentropy',optimizer='rmsprop',metrics = ['accuracy'])
-        history = model.fit(self.X_train, \
-                            self.y_train, \
-                            verbose = 1, \
-                            shuffle = True, \
-                            epochs = 100, \
-                            batch_size = 512, \
-                            validation_data = (self.X_test,self.y_test))
+      print("Compiling...")
 
-        model.save("cnn_model")
+      model.compile(loss='binary_crossentropy',optimizer='rmsprop',metrics = ['accuracy'])
+      history = model.fit(self.X_train, \
+                          self.y_train, \
+                          verbose = 1, \
+                          shuffle = True, \
+                          epochs = 100, \
+                          batch_size = 512, \
+                          validation_data = (self.X_test,self.y_test))
 
-        self.predict(model)
+      model.save("cnn_model")
 
-    def train_test_split(self):
-        """ Splitting the Data """
+      self.predict(model)
 
-    train = int(split * self.X_data.shape[2])
+  def train_test_split(self,split):
+    """ Splitting the Data """
+
+    train = int(0.8 * self.X_data.shape[2])
     
     self.X_train = self.X_data[:,:,:train]
     self.y_train = self.y_data[:train,:]
@@ -299,7 +306,64 @@ class model_cnn:
     print("Shape of Training Set (Y): " + str(self.y_train.shape))
     print("Shape of Test Set: " + str(self.X_test.shape))
 
-    def predict(self,model):
-        """ Evaluating the Network """
-        predictions = model.predict(x = X_test,batch_size = 512)
-        print(classification_report(y_test.argmax(axis = 1),predictions.argmax(axis = 1),target_names = [0,1]))
+  def predict(self,model):
+    """ Evaluating the Network """
+    predictions = model.predict(x = X_test,batch_size = 512)
+    print(classification_report(y_test.argmax(axis = 1),predictions.argmax(axis = 1),target_names = [0,1]))
+
+
+class WeightedAvg(Layer):
+    def __init__(self,a,**kwargs):
+        self.a = a
+        super(WeightedSum, self).__init__(**kwargs)
+    
+    def call(self,model_outputs):
+        return self.a * model_outputs[0] + (1 - self.a) * model_outputs[1]
+    
+
+
+
+class model_combined:
+    """ Combined Model LSTM + CNN """
+
+    def __init__(self,X_data,y_data):
+        """ Init """
+        self.X_data = X_data
+        self.y_data = y_data
+
+        self.X_train = np.array([])
+        self.y_train = np.array([])
+        self.X_test = np.array([])
+        self.y_test = np.array([])
+
+        self.model_train()
+
+    def model_train(self):
+        """ CNN + LSTM """
+
+        self.train_test_split(split = 0.8)
+
+        # CNN Netwrk
+        cnn_model = load_model('cnn')
+
+        # LSTM Netwrk
+        lstm_model = load_model('lstm')
+
+    def train_test_split(self,split=0.8):
+        """ Training and Testing Data Split """
+
+        train = int(0.8 * self.X_data.shape[2])
+    
+        self.X_train = self.X_data[:,:,:train]
+        self.y_train = self.y_data[:train,:]
+        self.X_test = self.X_data[:,:,train:]
+        self.y_test = self.y_data[train:,:]
+
+        self.X_train = np.swapaxes(self.X_train,0,2)
+        self.X_train = np.swapaxes(self.X_train,1,2)
+        self.X_test = np.swapaxes(self.X_test,0,2)
+        self.X_test = np.swapaxes(self.X_test,1,2)
+
+        print("Shape of Training Set: " + str(self.X_train.shape))
+        print("Shape of Training Set (Y): " + str(self.y_train.shape))
+        print("Shape of Test Set: " + str(self.X_test.shape))

@@ -8,7 +8,7 @@ from scipy import stats
 import random
 import sys
 from sklearn.model_selection import train_test_split
-from sklearn import svm
+from sklearn.tree import DecisionTreeClassifier
 import pickle
 from sklearn import metrics
 
@@ -140,9 +140,9 @@ class Data_2D:
       self.df = self.df.append(temp_df)
 
 
-class model_svm:
+class model_dt:
 
-  """ SVM Classifier """
+  """ Decision Tree Classifier """
   def __init__(self,df):
       """ Initialization """
 
@@ -159,11 +159,11 @@ class model_svm:
 
       X_train, X_test,y_train, y_test = train_test_split(X,y,test_size = 0.3,random_state = 42)
       
-      clf = svm.SVC()
+      clf = DecisionTreeClassifier(random_state = 0)
       print(X_train.shape)
       print(y_train.head())
       clf.fit(X_train,y_train)
-      model_file = 'svm.sav'
+      model_file = 'dt.sav'
       pickle.dump(clf, open(model_file, 'wb'))
       y_pred = clf.predict(X_test)
 
@@ -179,4 +179,4 @@ class model_svm:
 
 
 data2D = Data_2D()
-svm_ = model_svm(data2D.df)
+dt_ = model_dt(data2D.df)
