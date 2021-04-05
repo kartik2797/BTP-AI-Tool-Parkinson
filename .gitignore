@@ -132,3 +132,5 @@ dmypy.json
 py3env/
 .env
 app/.env
+
+.csv
