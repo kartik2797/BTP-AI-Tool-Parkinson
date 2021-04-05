@@ -10,10 +10,10 @@ from .trainer import predict
 from application.models import db
 from application.models import Users
 from werkzeug.utils import secure_filename
-from app.application.users import trainer
+from application.users import trainer
 
-UPLOAD_FOLDER = 'app/application/users/uploads'
-ALLOWED_EXTENSIONS = {'csv'}
+UPLOAD_FOLDER = '/home/sparsh/BTP/BTP-AI-Tool-Parkinson/app/application/users/uploads'
+ALLOWED_EXTENSIONS = {'csv','txt'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Blueprint Config
 users_bp = Blueprint(
@@ -26,7 +26,7 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@users_bp.route('/users',methods=['GET'])
+@users_bp.route('/users/',methods=['GET'])
 def index():
     return render_template('index.html')
 
@@ -42,21 +42,31 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename)) # File is Saved
+            
             req = request.form
             patient_name = req['patientName']
             patient_age = req['patientAge']
             patient_gen = req['patientGender']
             patient_email = req['patientEmail']
             patient_weight = req['patientWeight']
-            patient_file = f.filename
-            cursor = mysql.connection.cursor()
-            cursor.execute( "INSERT INTO patients(patient_name,patient_age,patient_gen,patient_email,patient_file,patient_weight) VALUES(%s,%s,%s,%s,%s,%s)",(patient_name,patient_age,patient_gen,patient_email,patient_file,patient_weight))
-            mysql.connection.commit()
-            cursor.close()
+            patient_file = file.filename
+
+            new_user = Users(
+                username = patient_name,
+                email = patient_email,
+                age = patient_age,
+                gender = patient_gen,
+                weight = patient_weight,
+                file_name=patient_file,
+                created = dt.now()
+            )
+
+            db.session.add(new_user)
+            db.session.commit()
 
             trainer.predict(patient_name, patient_weight, patient_file)
-            return redirect(url_for('uploaded_file',filename=filename))
+            return redirect('/users/results',filename=filename))
         
     return "ERROR UPLOADING FILE"
 
