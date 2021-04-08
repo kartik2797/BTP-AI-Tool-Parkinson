@@ -26,14 +26,18 @@
 </nav>
 <div class="container pt-3">
 <div class="row">
-  {% for key, value in result_2d.items() %}
+  {% for key, value in result_3d.items() %}
 
   <div class="col-sm-6">
     <div class="card text-white bg-info mb-3" style="max-width: 25rem;">
       <div class="card-header">{{ key }}</div>
       <div class="card-body">
-        <h5 class="card-title">Accuracy :: {{ value }}</h5>
-        <p class="card-text"> This model specialises on patient having GAIT Problems type 1</p>
+        {% if(value == 1) %}
+          <h5 class="card-title">Prediction :: Parkinsonian</h5>
+        {% else %}
+          <h5 class="card-title">Prediction :: Healthy</h5>
+        {% endif %}
+        <h5 class="card-title">Accuracy :: {{ accuracy_3d[key] }} %</h5>
       </div>
     </div>
   </div>
@@ -43,25 +47,34 @@
   </div>
   <div class="container pt-3">
     <div class="row">
-      {% for key, value in result_3d.items() %}
+      {% for key, value in result_2d.items() %}
     
       <div class="col-sm-6">
         <div class="card text-white bg-info mb-3" style="max-width: 25rem;">
           <div class="card-header">{{ key }}</div>
       <div class="card-body">
-        <h5 class="card-title">Accuracy :: {{ value }}</h5>
-        <p class="card-text"> This model specialises on patient having GAIT Problems type 1</p>
+        {% if(value == 1) %}
+          <h5 class="card-title">Prediction :: Parkinsonian</h5>
+        {% else %}
+          <h5 class="card-title">Prediction :: Healthy</h5>
+        {% endif %}
+        <h5 class="card-title">Accuracy :: {{ accuracy_2d[key] }} %</h5>
           </div>
         </div>
       </div>
     
         {% endfor %}
       </div>
-  <div class="card text-white bg-dark mb-3 pt-3" style="max-width: 70rem;">
-    <div class="card-header">Custom ML Model</div>
+  <div class="card text-white bg-dark mb-3 pt-3" style="max-width: 61rem;">
+    <div class="card-header">Final Prediction</div>
     <div class="card-body">
-      <h5 class="card-title">Accuracy :: NA</h5>
-      <p class="card-text">This model specialises on patient having GAIT Problems type 1</p>
+      <h5 class="card-title">Accuracy :: 93.7 %</h5>
+      {% if (result_final == 1) %}
+        <h5 class="card-title">Prediction :: Parkinsonian</h5>
+      {% else %}
+        <h5 class="card-title">Prediction :: Healthy</h5>
+      {% endif %}
+      <p class="card-text">Four tests were done on your file and this is the final prediction</p>
     </div>
   </div>
   <!-- <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">

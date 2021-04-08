@@ -1,18 +1,23 @@
 import numpy as np
 import pandas as pd
 from keras.models import load_model
+import pickle
 
 def predict(name, weight, filename):
     """ The Main Function After Submit """
-    
+
+    print(filename)
+
     cnn = load_model('/home/sparsh/BTP/BTP-AI-Tool-Parkinson/testing/cnn_model')
     lstm = load_model('/home/sparsh/BTP/BTP-AI-Tool-Parkinson/testing/lstm_model')
     svm = pickle.load(open('/home/sparsh/BTP/BTP-AI-Tool-Parkinson/testing/svm.sav','rb'))
     dt = pickle.load(open('/home/sparsh/BTP/BTP-AI-Tool-Parkinson/testing/dt.sav','rb'))
 
-    df_raw = pd.read_csv('/home/sparsh/BTP/BTP-AI-Tool-Parkinson/app/application/users/uploads',sep = "\t",columns = ["time","l1","l2","l3","l4","l5","l6","l7","l8","r1","r2","r3","r4","r5","r6","r7","r8","lTotal","rTotal"])
+    columns = ["time","l1","l2","l3","l4","l5","l6","l7","l8","r1","r2","r3","r4","r5","r6","r7","r8","lTotal","rTotal"]
+
+    df_raw = pd.read_csv('/home/sparsh/BTP/BTP-AI-Tool-Parkinson/app/application/users/uploads/' + filename,sep = "\t",names = columns)
     df_raw = df_raw.drop(['time'],axis = 1)
-    df_raw = df_raw.div(weight)
+    df_raw = df_raw // int(weight)
 
     X_data_3d = format_3d(df_raw)
     X_data_2d = format_2d(df_raw)
@@ -22,7 +27,7 @@ def predict(name, weight, filename):
     pred_svm = svm_pred(X_data_2d,svm)
     pred_dt = dt_pred(X_data_2d,dt)
 
-    pred_list = [cnn_pred,cnn_pred,cnn_pred,cnn_pred]
+    pred_list = [pred_cnn,pred_lstm,pred_svm,pred_dt]
     print("Prediction List: " + str(pred_list))
 
     # Custom Model Training Also Left
@@ -51,63 +56,34 @@ def format_2d(df):
     """ Formatting in 2D """
     df_format = pd.DataFrame()
 
-        for col in df.columns:
-            for x in ["Min", "Max", "Std", "Med", "Avg", "Skewness", "Kurtosis"]:
-                colname = col + x
-                if x == "Min":
-                    df_format.loc[0,colname] = df[col].min(axis = 0)
+    for col in df.columns:
+        for x in ["Min", "Max", "Std", "Med", "Avg", "Skewness", "Kurtosis"]:
+            colname = col + x
+            if x == "Min":
+                df_format.loc[0,colname] = df[col].min(axis = 0)
 
-                if x == "Max":
-                    df_format.loc[0,colname] = df[col].max(axis = 0)
+            if x == "Max":
+                df_format.loc[0,colname] = df[col].max(axis = 0)
 
-                if x == "Std":
-                    df_format.loc[0,colname] = df[col].std(axis = 0)
+            if x == "Std":
+                df_format.loc[0,colname] = df[col].std(axis = 0)
+            
+            if x == "Med":
+                df_format.loc[0,colname] = df[col].median(axis = 0)
+            
+            if x == "Avg":
+                df_format.loc[0,colname] = df[col].mean(axis = 0)
+            
+            if x == "Skewness":
+                df_format.loc[0,colname] = df[col].skew(axis = 0)
                 
-                if x == "Med":
-                    df_format.loc[0,colname] = df[col].median(axis = 0)
-                
-                if x == "Avg":
-                    df_format.loc[0,colname] = df[col].mean(axis = 0)
-                
-                if x == "Skewness":
-                    df_format.loc[0,colname] = df[col].skew(axis = 0)
-                    
-                if x == "Kurtosis":
-                    df_format.loc[0,colname] = df[col].skew(axis = 0)
+            if x == "Kurtosis":
+                df_format.loc[0,colname] = df[col].skew(axis = 0)
 
-        df_format = df_format.replace([np.inf,-np.inf],np.nan)
-        df_format = df_format.fillna(df_format.mean())
+    df_format = df_format.replace([np.inf,-np.inf],np.nan)
+    df_format = df_format.fillna(df_format.mean())
 
-        return df_formatdf_format = pd.DataFrame()
-
-        for col in df.columns:
-            for x in ["Min", "Max", "Std", "Med", "Avg", "Skewness", "Kurtosis"]:
-                colname = col + x
-                if x == "Min":
-                    df_format.loc[0,colname] = df[col].min(axis = 0)
-
-                if x == "Max":
-                    df_format.loc[0,colname] = df[col].max(axis = 0)
-
-                if x == "Std":
-                    df_format.loc[0,colname] = df[col].std(axis = 0)
-                
-                if x == "Med":
-                    df_format.loc[0,colname] = df[col].median(axis = 0)
-                
-                if x == "Avg":
-                    df_format.loc[0,colname] = df[col].mean(axis = 0)
-                
-                if x == "Skewness":
-                    df_format.loc[0,colname] = df[col].skew(axis = 0)
-                    
-                if x == "Kurtosis":
-                    df_format.loc[0,colname] = df[col].skew(axis = 0)
-
-        df_format = df_format.replace([np.inf,-np.inf],np.nan)
-        df_format = df_format.fillna(df_format.mean())
-
-        return df_format
+    return df_format
 
 def cnn_pred(X_data,cnn):
     """ CNN Prediction """
@@ -146,9 +122,25 @@ def svm_pred(X_data,svm):
 
 def dt_pred(X_data,dt):
     """ DT Prediction """
-    Y = self.dt.predict(X_data)
+    Y = dt.predict(X_data)
     pred = np.mean(Y,axis=0)
     pred = np.around(pred)
     pred = int(pred)
 
     return pred
+
+def final_predict(preds):
+    """ Final Godspeed Prediction """
+    model = pickle.load(open('/home/sparsh/BTP/BTP-AI-Tool-Parkinson/testing/gods_logistic.sav','rb'))
+    X = pd.DataFrame()
+    X.loc[0,'pred_cnn'] = preds[0]
+    X.loc[0,'pred_lstm'] = preds[1]
+    X.loc[0,'pred_svm'] = preds[2]
+    X.loc[0,'pred_dt'] = preds[3]
+
+    Y = model.predict(X)
+
+    final_pred = int(Y)
+
+    return final_pred
+

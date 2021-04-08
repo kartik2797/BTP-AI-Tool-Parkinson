@@ -10,7 +10,7 @@ from keras.utils import to_categorical
 import random
 import sys
 datas = np.loadtxt('sample.txt')
-datas = datas[:,np.arange(1,19)]
+	datas = datas[:,np.arange(1,19)]
 datas = np.delete(datas,num,1)
 datas = np.delete(datas,num,1)
 datas = np.delete(datas,num,1)

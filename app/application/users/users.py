@@ -52,39 +52,67 @@ def upload_file():
             patient_weight = req['patientWeight']
             patient_file = file.filename
 
-            new_user = Users(
-                username = patient_name,
-                email = patient_email,
-                age = patient_age,
-                gender = patient_gen,
-                weight = patient_weight,
-                file_name=patient_file,
-                created = dt.now()
-            )
+            # new_user = Users(
+            #     username = patient_name,
+            #     email = patient_email,
+            #     age = patient_age,
+            #     gender = patient_gen,
+            #     weight = patient_weight,
+            #     file_name=patient_file,
+            #     created = dt.now()
+            # )
 
-            db.session.add(new_user)
-            db.session.commit()
+            # db.session.add(new_user)
+            # db.session.commit()
 
-            trainer.predict(patient_name, patient_weight, patient_file)
-            return redirect('/users/results',filename=filename))
+        
+            return redirect(url_for('users_bp.res',patient_name = patient_name, patient_weight = patient_weight,patient_file = patient_file))
         
     return "ERROR UPLOADING FILE"
 
 @users_bp.route('/users/results')
-def res(name=None):
-    v1 = 90
-    v2 = 30
-    v3 = 60
-    v4 = 77
-    res = [1,2,3,4]
-    cursor = mysql.connection.cursor()
-    cursor.execute( "INSERT INTO patients(patient_name,patient_age,patient_gen,patient_email,patient_file,patient_weight) VALUES(%s,%s,%s,%s,%s,%s)",(patient_name,patient_age,patient_gen,patient_email,patient_file,patient_weight))
-    mysql.connection.commit()
-    cursor.close()
-    result = {"LSTM":v1,"CNN":v2,"SVM":v3,"LSTM + CNN":v4}
-    '''saving results to db'''
+def res(name = 'results'):
+
+    patient_name = request.args.get('patient_name')
+    patient_weight = request.args.get('patient_weight')
+    patient_file = request.args.get('patient_file')
+
+    print("File Name is : " + str(patient_file))
+    preds = trainer.predict(patient_name, patient_weight, patient_file)
+
+    pred_cnn = preds[0]
+    pred_lstm = preds[1]
+    pred_svm = preds[2]
+    pred_dt = preds[3]
+
+    pred_final = trainer.final_predict(preds)
     
-    return render_template('result.html',result = result)
+    acc_cnn = 91.5
+    acc_lstm = 96.4
+    acc_svm = 78
+    acc_dt = 85
+
+    accuracy_3d = {
+        "LSTM": acc_lstm,
+        "CNN": acc_cnn
+    }
+    accuracy_2d = {
+        "SVM": acc_svm,
+        "DT": acc_dt
+    }
+    
+    result_3d = {
+        "LSTM": pred_lstm,
+        "CNN": pred_cnn
+    }
+    result_2d = {
+        "SVM": pred_svm,
+        "DT": pred_dt
+    }
+    
+    result_final = pred_final
+
+    return render_template('result.html',result_2d = result_2d,result_3d = result_3d,accuracy_2d = accuracy_2d,accuracy_3d = accuracy_3d,result_final = pred_final)
 
 @users_bp.route('/add_user',methods=['GET'])
 def add_user():
