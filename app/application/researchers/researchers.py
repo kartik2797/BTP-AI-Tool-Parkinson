@@ -10,6 +10,7 @@ from application.models import db
 from application.models import Researcher
 import MySQLdb.cursors
 import re
+from .forms import SignupForm
 
 # Blueprint Config
 researchers_bp = Blueprint(
@@ -59,39 +60,54 @@ def post_selection(name=None):
         # Returning to a Template
         return render_template('confirmation.html',fin_selections = fin_selections)
 
-@app.route('/researcherlogin', methods=['GET', 'POST'])
+@researchers_bp.route('/researcher/login',methods = ['GET','POST'])
 def login():
-    # Output message if something goes wrong...
-    msg = ''
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
-        # Create variables for easy access
-        username = request.form['username']
-        password = request.form['password']
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM accounts WHERE username = %s AND password = %s', (username, password,))
-        # Fetch one record and return result
-        account = cursor.fetchone()
-        if account:
-            # Create session data, we can access this data in other routes
-            session['loggedin'] = True
-            session['id'] = account['id']
-            session['username'] = account['username']
-            # Redirect to home page
-            return 'Logged in successfully!'
-        else:
-            # Account doesnt exist or username/password incorrect
-            msg = 'Incorrect username/password!'
-    return render_template('index.html', msg=msg)
+    if current_user.is_authenticated:
+        return redirect(url_for('main_bp.dashboard'))
 
-@app.route('/pythonlogin/logout')
-def logout():
-    # Remove session data, this will log the user out
-   session.pop('loggedin', None)
-   session.pop('id', None)
-   session.pop('username', None)
-   # Redirect to login page
-   return redirect(url_for('login'))
+    form = LoginForm()
+    # Validate login attempt
+    if form.validate_on_submit():
+        user = Researcher.query.filter_by(email=form.email.data).first()
+        if user and user.check_password(password=form.password.data):
+            login_user(user)
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('main_bp.dashboard'))
+        flash('Invalid username/password combination')
+        return redirect(url_for('auth_bp.login'))
+    return render_template(
+        'login.jinja2',
+        form=form,
+        title='Log in.',
+        template='login-page',
+        body="Log in with your User account."
+    )
 
+
+@researchers_bp.route('/researcher/signup',methods = ['GET','POST'])
+def signup():
+    form = SignupForm()
+    if form.validate_on_submit():
+        existing_researcher = Researcher.query.filter_by(email=form.email.data).first()
+        if existing_researcher is None:
+            researcher = Researcher(
+                name=form.name.data,
+                email=form.email.data,
+                website=form.website.data
+            )
+            researcher.set_password(form.password.data)
+            db.session.add(researcher)
+            db.session.commit()  # Create new researcher
+            login_user(researcher)  # Log in as newly created researcher
+            return redirect(url_for('main_bp.dashboard'))
+        flash('A researcher already exists with that email address.')
+    return render_template(
+        'signup.jinja2',
+        title='Create an Account.',
+        form=form,
+        template='signup-page',
+        body="Sign up for a researcher account."
+    )
 
 @researchers_bp.route('/researcher/download',methods=['GET','POST'])
 def download_file():
@@ -100,3 +116,17 @@ def download_file():
         return send_file(os.path.join(os.getcwd(),'custom.py'),attachment_filename='custom.py')
     except Exception as e:
         return str(e)
+
+@login_manager.user_loader
+def load_user(user_id):
+    """Check if user is logged-in on every page load."""
+    if user_id is not None:
+        return Researcher.query.get(user_id)
+    return None
+
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    """Redirect unauthorized users to Login page."""
+    flash('You must be logged in to view that page.')
+    return redirect(url_for('auth_bp.login'))
