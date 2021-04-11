@@ -59,7 +59,7 @@ def post_selection(name=None):
         # Returning to a Template
         return render_template('confirmation.html',fin_selections = fin_selections)
 
-@app.route('/researcherlogin', methods=['GET', 'POST'])
+@researchers_bp.route('/researcher/login', methods=['GET', 'POST'])
 def login():
     # Output message if something goes wrong...
     msg = ''
@@ -99,4 +99,5 @@ def download_file():
     try:
         return send_file(os.path.join(os.getcwd(),'custom.py'),attachment_filename='custom.py')
     except Exception as e:
-        return str(e)
+        return str(e)   
+        

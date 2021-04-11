@@ -14,6 +14,8 @@ class Config:
     FLASK_ENV = 'development'
     TEMPLATES_FOLDER = 'templates'
 
+    SECRET_KEY = environ.get('SECRET_KEY')
+
     # Database
     SQLALCHEMY_DATABASE_URI = environ.get('SQLALCHEMY_DATABASE_URI')
     SQLALCHEMY_ECHO = False
