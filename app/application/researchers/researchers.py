@@ -1,15 +1,16 @@
 from flask import Blueprint,session,url_for
 from flask import current_app as app
-from flask import render_template,request,redirect,send_file
+from flask import render_template,request,redirect,send_file,flash
 from flask_mysqldb import MySQL
+from flask_login import login_user
 import numpy as np
 import pickle
 import os
 from .generate import Custom
 from application.models import db
 from application.models import Researcher
-import MySQLdb.cursors
 import re
+
 
 # Blueprint Config
 researchers_bp = Blueprint(
@@ -59,45 +60,67 @@ def post_selection(name=None):
         # Returning to a Template
         return render_template('confirmation.html',fin_selections = fin_selections)
 
-@researchers_bp.route('/researcher/login', methods=['GET', 'POST'])
-def login():
-    # Output message if something goes wrong...
-    msg = ''
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
-        # Create variables for easy access
-        username = request.form['username']
-        password = request.form['password']
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM accounts WHERE username = %s AND password = %s', (username, password,))
-        # Fetch one record and return result
-        account = cursor.fetchone()
-        if account:
-            # Create session data, we can access this data in other routes
-            session['loggedin'] = True
-            session['id'] = account['id']
-            session['username'] = account['username']
-            # Redirect to home page
-            return 'Logged in successfully!'
-        else:
-            # Account doesnt exist or username/password incorrect
-            msg = 'Incorrect username/password!'
-    return render_template('index.html', msg=msg)
-
-@app.route('/pythonlogin/logout')
-def logout():
-    # Remove session data, this will log the user out
-   session.pop('loggedin', None)
-   session.pop('id', None)
-   session.pop('username', None)
-   # Redirect to login page
-   return redirect(url_for('login'))
-
-
 @researchers_bp.route('/researcher/download',methods=['GET','POST'])
 def download_file():
     """ Download Custom.py File """
     try:
         return send_file(os.path.join(os.getcwd(),'custom.py'),attachment_filename='custom.py')
     except Exception as e:
-        return str(e)   
-        
+        return str(e)
+
+@researchers_bp.route('/researcher/signup')
+def signup():
+    return render_template('signup.html')
+
+
+@researchers_bp.route('/researcher/signup',methods = ['POST'])
+def signup_post():
+    """ Getting the SignUpForm """
+    username = request.form['username']
+    name = request.form['name']
+    email = request.form['email']
+    password = request.form['password']
+    confirm_password = request.form['confirm_password']
+
+    # Checking if User already exists
+    user = Researcher.query.filter_by(name = name).first()
+
+    if user:
+        flash("Username has already been taken!")
+        return redirect(url_for('researchers_bp.signup'))
+
+    new_user = Researcher (
+        username = username,
+        name = name,
+        email = email,
+    )
+    new_user.set_password(password)
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    return "Signup Successful!"
+
+@researchers_bp.route('/researcher/login')
+def login():
+    """ Login Page """
+    return render_template('login.html')
+
+@researchers_bp.route('/researcher/login',methods = ['POST'])
+def login_post():
+    """ Getting the Login Form """
+    username = request.form['username']
+    password = request.form['password']
+    # remember = True if request.form.get('remember') else False # Add a Remember Me button first
+
+    user = Researcher.query.filter_by(username = username).first()
+
+    if not user or not user.check_password(password):
+        flash("Username or Password is Wrong! Try Again!")
+        return redirect(url_for('researchers_bp.login'))
+
+    login_user(user)
+    return "Logged In!"
+
+
+
