@@ -2,7 +2,7 @@ from flask import Blueprint,session,url_for
 from flask import current_app as app
 from flask import render_template,request,redirect,send_file,flash
 from flask_mysqldb import MySQL
-from flask_login import login_user
+from flask_login import login_user,login_required,current_user,logout_user
 import numpy as np
 import pickle
 import os
@@ -99,7 +99,7 @@ def signup_post():
     db.session.add(new_user)
     db.session.commit()
 
-    return "Signup Successful!"
+    return redirect(url_for('researchers_bp.profile'))
 
 @researchers_bp.route('/researcher/login')
 def login():
@@ -120,7 +120,18 @@ def login_post():
         return redirect(url_for('researchers_bp.login'))
 
     login_user(user)
-    return "Logged In!"
+    return redirect(url_for('researchers_bp.profile'))
+
+@researchers_bp.route('/researcher/profile')
+@login_required
+def profile():
+    """ Profile Page """
+    return render_template('profile.html',name = current_user.name)
 
 
-
+@researchers_bp.route('/researcher/logout')
+@login_required
+def logout():
+    """ Logout """
+    logout_user()
+    return redirect(url_for('researchers_bp.login'))
