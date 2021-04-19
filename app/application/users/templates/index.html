@@ -9,7 +9,12 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
-
+	
+	<div class="bg-image" 
+	style="
+	  background-image: url('/home/kartik/BTP-Parkinson/BTP-AI-Tool-Parkinson/app/application/users/uploads/luke-chesser-IGtutkXikuc-unsplash.jpg');
+	  height: 100vh;
+	">
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -33,13 +38,14 @@
   </div>
 </nav>
   
-<div class="container">
+<div class="container" >
     <div class="row">
-		<div class="col-md-6">
+		<div class="col-md-4 border"></div>
+		<div class="col-md-4 border ">
 			<h3>
 				Upload the VGRF Gait File from Sensors
 			</h3>
-			<form role="form" action="http://localhost:5000/users/uploader" method="POST" enctype="multipart/form-data">
+			<form role="form" action="http://localhost:5000/users/uploader" method="POST" enctype="multipart/form-data" class="border bg-white p-3 mb-2 bg-secondary text-white">
 				<div class="form-group">
 					<label for="patientName">
 						Name of the Patient
@@ -85,6 +91,7 @@
 			</form>
 		</div>
 </div>
-
+</div>
+</div>
 </body>
 </html>

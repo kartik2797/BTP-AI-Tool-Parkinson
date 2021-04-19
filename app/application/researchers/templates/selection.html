@@ -9,7 +9,11 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
-
+  <div class="bg-image" 
+  style="
+    background-image: url('/home/kartik/BTP-Parkinson/BTP-AI-Tool-Parkinson/app/application/users/uploads/luke-chesser-IGtutkXikuc-unsplash.jpg');
+    height: 100vh;
+  ">
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -18,9 +22,12 @@
   </div>
 </nav>
 
+<div class="row" align = "center">
 <form action="http://localhost:5000/researcher/selected" method="POST">
   <div class="row">
-    <div class="col-xs-6">
+    <div class="col-sm-4 border bg-dark">
+      <div class="card">
+        <div class="card-body">
       <div class="container">
         <h3 class="display-4"> Feature Selection</h3>
         <table class="table table-hover" style="width:50%">
@@ -49,8 +56,10 @@
         </table>
       </div>
     </div>
+  </div>
+    </div>
     
-    <div class="col-xs-6">
+    <div class="col-sm-4 border bg-dark ">
       <div class="container">
         <h3 class="display-4">Model Selection</h3>
         <table class="table table-hover" style="width:50%">
@@ -81,8 +90,9 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-xs-6">
+  <div class="row" align = "center">
+   
+    <div class="col-sm-4 border bg-dark">
       <div class="container">
           <h2>Right Foot</h2>
           <p></p>            
@@ -91,7 +101,7 @@
               <tr>
                 <td><label for="r1">R1 Sensor</label</td>
                 <td><input type="checkbox" id="r1" name="rs1" value="r1" checked></td>
-                <td rowspan="0"><img src="C:\Users\Asus\Desktop\BTP-Parkinson\BTP-AI-Tool-Parkinson\images\right_foot_sensor.png" class="rounded float-start"></td>
+                <td rowspan="0"><img src="/home/kartik/BTP-Parkinson/BTP-AI-Tool-Parkinson/app/application/researchers/static/images/right_foot_sensor.png" class="rounded float-start" height="400rem"></td>
               </tr>
               <tr>
                   <td><label for="r2">R2 Sensor</label</td>
@@ -126,7 +136,7 @@
         </div>
       </div>
       
-      <div class="col-xs-6">
+      <div class="col-sm-4 border bg-dark">
         <div class="container">
           <h2>Left Foot</h2>
           <p></p>            
@@ -135,7 +145,7 @@
               <tr>
                 <td><label for="l1">l1 Sensor</label</td>
                 <td><input type="checkbox" id="l1" name="ls1" value="l1" checked></td>
-                <td rowspan="0"><img src="C:\Users\Asus\Desktop\BTP-Parkinson\BTP-AI-Tool-Parkinson\images\left_foot_sensor.png" class="rounded float-start" height="50%"></td>
+                <td rowspan="0"><img src="/home/kartik/BTP-Parkinson/BTP-AI-Tool-Parkinson/app/application/researchers/static/images/left_foot_sensor.png" class="rounded float-start" height="400rem"></td>
               </tr>
               <tr>
                   <td><label for="l2">l2 Sensor</label</td>
@@ -170,11 +180,12 @@
         </div>
       </div>
   </div>
-  <div class="row">
-    <div class="col-xs-6">
-      <p><input type="submit" value="submit"></p>
+  <div class="row" align = "center">
+    <div class="col-sm-4 border bg-dark">
+      <p><input type="submit" value="submit" class="btn-success"></p>
     </div>
   </div>
 </form>
+</div>
 
 </body>
