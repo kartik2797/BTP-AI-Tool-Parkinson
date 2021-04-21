@@ -19,7 +19,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 users_bp = Blueprint(
         'users_bp',__name__,
         template_folder='templates',
-        static_folder='static'
+        static_folder='static',
+        static_url_path='/app/application/users/static'
     )
 
 def allowed_file(filename):
@@ -52,18 +53,18 @@ def upload_file():
             patient_weight = req['patientWeight']
             patient_file = file.filename
 
-            # new_user = Users(
-            #     username = patient_name,
-            #     email = patient_email,
-            #     age = patient_age,
-            #     gender = patient_gen,
-            #     weight = patient_weight,
-            #     file_name=patient_file,
-            #     created = dt.now()
-            # )
+            new_user = Users(
+                username = patient_name,
+                email = patient_email,
+                age = patient_age,
+                gender = patient_gen,
+                weight = patient_weight,
+                file_name=patient_file,
+                created = dt.now()
+            )
 
-            # db.session.add(new_user)
-            # db.session.commit()
+            db.session.add(new_user)
+            db.session.commit()
 
         
             return redirect(url_for('users_bp.res',patient_name = patient_name, patient_weight = patient_weight,patient_file = patient_file))

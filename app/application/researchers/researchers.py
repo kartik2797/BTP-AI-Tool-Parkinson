@@ -16,10 +16,12 @@ import re
 researchers_bp = Blueprint(
         'researchers_bp',__name__,
         template_folder='templates',
-        static_folder='static'
+        static_folder='static',
+        static_url_path='/app/application/researchers/static'
     )
 
 @researchers_bp.route('/researcher/select')
+@login_required
 def custom_select(name=None):
     """ Researcher selects the methods he wants """
     return render_template('selection.html')
@@ -99,6 +101,7 @@ def signup_post():
     db.session.add(new_user)
     db.session.commit()
 
+    login_user(new_user)
     return redirect(url_for('researchers_bp.profile'))
 
 @researchers_bp.route('/researcher/login')

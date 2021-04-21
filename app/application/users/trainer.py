@@ -2,20 +2,21 @@ import numpy as np
 import pandas as pd
 from keras.models import load_model
 import pickle
+import os
 
 def predict(name, weight, filename):
     """ The Main Function After Submit """
 
     print(filename)
 
-    cnn = load_model('/home/sparsh/BTP/BTP-AI-Tool-Parkinson/testing/cnn_model')
-    lstm = load_model('/home/sparsh/BTP/BTP-AI-Tool-Parkinson/testing/lstm_model')
-    svm = pickle.load(open('/home/sparsh/BTP/BTP-AI-Tool-Parkinson/testing/svm.sav','rb'))
-    dt = pickle.load(open('/home/sparsh/BTP/BTP-AI-Tool-Parkinson/testing/dt.sav','rb'))
+    cnn = load_model(os.path.join(os.environ.get('HOME_URL'),'app/application/users/Saved_Models/cnn_model'))
+    lstm = load_model(os.path.join(os.environ.get('HOME_URL'),'app/application/users/Saved_Models/lstm_model'))
+    svm = pickle.load(open(os.path.join(os.environ.get('HOME_URL'),'app/application/users/Saved_Models/svm.sav'),'rb'))
+    dt = pickle.load(open(os.path.join(os.environ.get('HOME_URL'),'app/application/users/Saved_Models/dt.sav'),'rb'))
 
     columns = ["time","l1","l2","l3","l4","l5","l6","l7","l8","r1","r2","r3","r4","r5","r6","r7","r8","lTotal","rTotal"]
 
-    df_raw = pd.read_csv('/home/sparsh/BTP/BTP-AI-Tool-Parkinson/app/application/users/uploads/' + filename,sep = "\t",names = columns)
+    df_raw = pd.read_csv(os.path.join(os.environ.get('HOME_URL'),'app/application/users/uploads/' + filename),sep = "\t",names = columns)
     df_raw = df_raw.drop(['time'],axis = 1)
     df_raw = df_raw // int(weight)
 
@@ -131,7 +132,7 @@ def dt_pred(X_data,dt):
 
 def final_predict(preds):
     """ Final Godspeed Prediction """
-    model = pickle.load(open('/home/sparsh/BTP/BTP-AI-Tool-Parkinson/testing/gods_logistic.sav','rb'))
+    model = pickle.load(open(os.path.join(os.environ.get('HOME_URL'),'app/application/users/Saved_Models/gods_logistic.sav'),'rb'))
     X = pd.DataFrame()
     X.loc[0,'pred_cnn'] = preds[0]
     X.loc[0,'pred_lstm'] = preds[1]
