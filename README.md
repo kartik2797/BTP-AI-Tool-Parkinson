@@ -1,5 +1,5 @@
 # BTP-AI-Tool-Parkinson
 
-Theres a DB change with the inclusion of one column 'weights' in patient
+This project is a part of our Final year bachelor's Thesis Project. 
 
 ### Version of Sklearn: 0.22.2.post1
