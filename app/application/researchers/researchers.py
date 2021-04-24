@@ -66,7 +66,7 @@ def post_selection(name=None):
 def download_file():
     """ Download Custom.py File """
     try:
-        return send_file(os.path.join(os.getcwd(),'custom.py'),attachment_filename='custom.py')
+        return send_file(os.path.join(os.getcwd() + '/application/researchers/','custom.py'),attachment_filename='custom.py')
     except Exception as e:
         return str(e)
 

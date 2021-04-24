@@ -42,14 +42,7 @@ class Custom():
     def select_foot(self):
         """ Writes Code for the Foot """
         foot_str = ""
-        for feet in self.foot:
-            if feet[0] == 'l':
-                num = int(feet[1])
-                foot_str += "datas = np.delete(datas,num,1)\n"
-            elif feet[0] == 'r':
-                num = int(feet[1])
-                num += 7
-                foot_str += "datas = np.delete(datas,num,1)\n"
+        
         
         return foot_str
     
