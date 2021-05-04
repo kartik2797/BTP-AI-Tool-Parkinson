@@ -16,6 +16,7 @@ This project is a part of our Final year bachelor's Thesis Project.
   - [ ] Inclusion of more pre defined methods of preprocessing and models
   - [ ] Training on Cloud
   - [ ] Updation in Database of the models the user has trained
+  - [ ] Allowing the user to upload their custom program/methods with appropriate permissions
   - [ ] Beautifying the UI Page 
 
 ### Version of Sklearn: 0.22.2.post1
