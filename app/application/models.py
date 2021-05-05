@@ -32,27 +32,6 @@ class Researcher(UserMixin, db.Model):
         nullable = False
     )
 
-    model = db.Column(
-        db.String(50),
-        index = False,
-        unique = False,
-        nullable = True
-    )
-
-    feet = db.Column(
-        db.String(50),
-        index = False,
-        unique = False,
-        nullable = True
-    )
-
-    preprocess = db.Column(
-        db.String(100),
-        index = False,
-        unique = False,
-        nullable = True
-    )
-
     created_at = db.Column(
         db.DateTime,
         index=False,
@@ -141,3 +120,115 @@ class Users(db.Model):
 
     def __repr__(self):
         return '<Users {}>'.format(self.username)
+
+class Preprocess(db.Model):
+    """ Data Model for Preprocessing Methods """
+    __tablename__ = 'preprocess'
+
+    id = db.Column(
+        db.Integer,
+        primary_key = True
+    )
+
+    user_id = db.Column(
+        db.Integer,
+        index = False,
+        unique = False,
+        nullable = False
+    )
+
+    cop = db.Column(
+        db.Integer,
+        index = False,
+        unique = False,
+        nullable = False
+    )
+
+    kurt = db.Column(
+        db.Integer,
+        index = False,
+        unique = False,
+        nullable = False
+    )
+
+    skew = db.Column(
+        db.Integer,
+        index = False,
+        unique = False,
+        nullable = False
+    )
+
+    mean = db.Column(
+        db.Integer,
+        index = False,
+        unique = False,
+        nullable = False
+    )
+
+    std = db.Column(
+        db.Integer,
+        index = False,
+        unique = False,
+        nullable = False
+    )
+
+    def __repr__(self):
+        return '<Preprocess {}>'.format(self.user_id)
+    
+class Training(db.Model):
+    """ Training Scripts for different Users """
+    __tablename__ = 'scripts'
+
+    id = db.Column(
+        db.Integer,
+        primary_key = True
+    )
+
+    user_id = db.Column(
+        db.Integer,
+        index = False,
+        unique = False,
+        nullable = False
+    )
+
+    name = db.Column(
+        db.String(70),
+        index = False,
+        unique = False,
+        nullable = False
+    )
+
+    model = db.Column(
+        db.String(70),
+        index = False,
+        unique = False,
+        nullable = False
+    )
+
+    preprocess = db.Column(
+        db.Integer,
+        index = False,
+        unique = False,
+        nullable = False
+    )
+
+    feet = db.Column(
+        db.String(20),
+        index = False,
+        unique = False,
+        nullable = False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        index = False,
+        unique = False,
+        nullable = True
+    )
+
+    updated_at = db.Column(
+        db.DateTime,
+        index = False,
+        unique = False,
+        nullable = True
+    )

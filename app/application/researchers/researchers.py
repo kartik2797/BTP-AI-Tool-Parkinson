@@ -9,6 +9,8 @@ import os
 from .generate import Custom
 from application.models import db
 from application.models import Researcher
+from application.models import Preprocess
+from application.models import Training
 import re
 
 
@@ -27,6 +29,7 @@ def custom_select(name=None):
     return render_template('selection.html')
 
 @researchers_bp.route('/researcher/selected',methods=['POST','GET'])
+@login_required
 def post_selection(name=None):
     """ Processing the selected methods """
     if request.method == "POST":
@@ -57,7 +60,22 @@ def post_selection(name=None):
         custom_script.generate()
 
         # Add to Database as well
-        
+        name = current_user.username
+        user_id = current_user.id
+        preprocess_id = preprocess_db(user_id,preprocess)
+        feet_str = feet_db(foot)
+
+        new_script = Training(
+            user_id = user_id,
+            name = name,
+            model = model,
+            preprocess = preprocess_id,
+            feet = feet_str
+        )
+
+        db.session.add(new_script)
+        db.session.commit()
+        print("Added to Database")
 
         # Returning to a Template
         return render_template('confirmation.html',fin_selections = fin_selections)
@@ -138,3 +156,42 @@ def logout():
     """ Logout """
     logout_user()
     return redirect(url_for('researchers_bp.login'))
+
+def preprocess_db(user_id,preprocess):
+    """ Adding Preprocessing methods to the DB """
+    bool_methods = {
+        'cop': 0,
+        'kurt': 0,
+        'skew': 0,
+        'mean': 0,
+        'std': 0
+    }
+
+    for key in preprocess:
+        bool_methods[key] = 1
+    
+    preprocess_user = Preprocess(
+        user_id = user_id,
+        cop = bool_methods['cop'],
+        kurt = bool_methods['kurt'],
+        skew = bool_methods['skew'],
+        mean = bool_methods['mean'],
+        std = bool_methods['std']
+    )
+
+    db.session.add(preprocess_user)
+    db.session.commit()
+
+    return preprocess_user.id
+
+def feet_db(foot):
+    """ Return the Selection of Feet String """
+    list_str = ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0']
+
+    for key in foot:
+        if key[0] == 'l':
+            list_str[int(key[-1]) - 1] = '1'
+        elif key[0] == 'r':
+            list_str[int(key[-1]) + 7] = '1'
+    
+    return "".join(list_str)
