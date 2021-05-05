@@ -315,29 +315,21 @@ a.article, a.article:hover {
                   <tr>
                     <th scope="col">#</th>
                     <th scope="col">Model</th>
-                    <th scope="col">Algorithm</th>
                     <th scope="col">Features</th>
                     <th scope="col">Current Accuracy</th>
                     <th scope="col">Update accuracy</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>1</td>
-                    <td>LSTM+CNN</td>
-                    <td>RAW Data</td>
-                    <td>NA</td>
-                    <td><input type="text" class="form-control" id="ac1" ></td>
-                  </tr>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>1</td>
-                    <td>SVM</td>
-                    <td>RAW Data</td>
-                    <td>NA</td>
-                    <td><input type="text" class="form-control" id="ac2" ></td>
-                  </tr>
+                    {% for script in scripts %}
+                        <tr>
+                            <th scope="row">{{ scripts.index(script) + 1}}</th>
+                            <td> {{ script.model }} </td>
+                            <td> {{ script.feet }} </td>
+                            <td> NA </td>
+                            <td><input type="text" class="form-control" id="ac + {{scripts.index(script)}}" ></td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
               </table>
               <button type="submit" class="btn btn-primary">Update Model Accuracy</button>

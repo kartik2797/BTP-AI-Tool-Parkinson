@@ -147,7 +147,11 @@ def login_post():
 @login_required
 def profile():
     """ Profile Page """
-    return render_template('profile.html',name = current_user.name)
+    name = current_user.name
+    user_id = current_user.id
+
+    scripts = db.session.query(Training).filter_by(user_id = user_id).all()
+    return render_template('profile.html',name = name,scripts = scripts)
 
 
 @researchers_bp.route('/researcher/logout')
