@@ -15,7 +15,7 @@ This project is a part of our Final year bachelor's Thesis Project.
   - [ ] Custom Model and Preprocessing methods addition
   - [ ] Inclusion of more pre defined methods of preprocessing and models
   - [ ] Training on Cloud
-  - [ ] Updation in Database of the models the user has trained
+  - [x] Updation in Database of the models the user has trained
   - [ ] Allowing the user to upload their custom program/methods with appropriate permissions
   - [ ] Beautifying the UI Page 
 
